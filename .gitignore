@@ -8,6 +8,10 @@
 *.gch
 *.pch
 
+# Dependency files
+*.d
+*.Td
+
 # Compiled Dynamic libraries
 *.so
 *.dylib
@@ -24,6 +28,8 @@
 *.lib
 
 # Executables
+bin/*
+bin/**/*
 *.exe
 *.out
 *.app
