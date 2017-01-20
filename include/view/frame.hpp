@@ -6,17 +6,16 @@
 namespace View {
 
 	struct Frame {
-		// Getters
-		SDL_Surface *get_surface(void);
-		SDL_Renderer *get_renderer(void);
-		SDL_Window *get_window(void);
-
-		// Setters
+		/** Runs one full update-and-render cycle.
+ 		 * @return true if the cycle was successful. */
 		bool run_once(void);
+		/** Repeats run_once until it returns false.
+ 		 * @return true if the cycles were successful. */
 		bool run(void);
 
-		// {C,D}'tors
+		/** Constructor; forwards the arguments to SDL_CreateWindow. */
 		template<typename... TN> Frame(TN...);
+		/** Destructor; frees the child window. */
 		virtual ~Frame(void);
 	private:
 		SDL_Window *win;

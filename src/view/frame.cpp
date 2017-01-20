@@ -3,7 +3,7 @@
 
 namespace View {
 
-	SDL_Surface *Frame::get_surface(void)
+	/*SDL_Surface *Frame::get_surface(void)
 	{
 		return SDL_GetWindowSurface(win);
 	}
@@ -14,6 +14,6 @@ namespace View {
 	SDL_Window *Frame::get_window(void) 
 	{
 		return win;
-	}
+	}*/
 
 }
