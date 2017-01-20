@@ -42,5 +42,7 @@ bin/**/*
 *.out
 *.app
 
-# Temporary files
+# Temporary files and sentinels
+*.bak
+*.sen
 *.swp
