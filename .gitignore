@@ -27,9 +27,20 @@
 *.a
 *.lib
 
+# Documents
+man/*
+man/**/*
+html/*
+html/**/*
+latex/*
+latex/**/*
+
 # Executables
 bin/*
 bin/**/*
 *.exe
 *.out
 *.app
+
+# Temporary files
+*.swp
