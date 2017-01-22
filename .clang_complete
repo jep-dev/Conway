@@ -1,0 +1,7 @@
+-std=c++11
+ -fPIC
+ -Iinclude/
+ -Iinclude/control
+ -Iinclude/view
+ -Iinclude/model
+
