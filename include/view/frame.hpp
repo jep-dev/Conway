@@ -13,8 +13,9 @@ namespace View {
  		 * @return true if the cycles were successful. */
 		bool run(void);
 
-		/** Constructor; forwards the arguments to SDL_CreateWindow. */
-		template<typename... TN> Frame(TN...);
+		/** Constructor; forwards the arguments to SDL_CreateWindow.
+ 		 * @param tn Arguments to forward to SDL_CreateWindow. */
+		template<typename... TN> Frame(TN... tn);
 		/** Destructor; frees the child window. */
 		virtual ~Frame(void);
 	private:

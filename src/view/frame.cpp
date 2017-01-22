@@ -2,18 +2,28 @@
 
 
 namespace View {
-
-	/*SDL_Surface *Frame::get_surface(void)
+	Frame::~Frame(void)
 	{
-		return SDL_GetWindowSurface(win);
+		if(win) SDL_DestroyWindow(win);
 	}
-	SDL_Renderer *Frame::get_renderer(void)
+	bool Frame::run_once(void)
 	{
-		return SDL_GetRenderer(win);
+		SDL_Event ev;
+		if(SDL_PollEvent(&ev)) {
+			switch(ev.type) {
+				case SDL_WINDOWEVENT: {
+					auto &window = ev.window;
+					/*if(window = win) {
+					}*/
+				} break;
+			}
+		}
+		return true;
 	}
-	SDL_Window *Frame::get_window(void) 
+	bool Frame::run(void)
 	{
-		return win;
-	}*/
-
+		while(run_once()) {
+		}
+		return true;
+	}
 }

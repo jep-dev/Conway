@@ -5,10 +5,6 @@ namespace View {
 	template<typename... TN>
 	Frame::Frame(TN... tn):
 		win(SDL_CreateWindow(tn...)) {}
-	Frame::~Frame(void)
-	{
-	}
-
 }
 
 #endif
