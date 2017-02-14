@@ -6,11 +6,11 @@
 namespace View {
 
 	struct Frame {
-		/** Runs one full update-and-render cycle.
- 		 * @return true if the cycle was successful. */
-		bool run_once(void);
-		/** Repeats run_once until it returns false.
- 		 * @return true if the cycles were successful. */
+		/** Polls and processes one event.
+ 		 * @return true unless the frame should close. */
+		bool poll(void);
+		/** Polls until it returns false.
+ 		 * @return true unless the frame should close. */
 		bool run(void);
 
 		/** Constructor; forwards the arguments to SDL_CreateWindow.
