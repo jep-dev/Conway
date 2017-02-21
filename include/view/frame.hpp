@@ -15,15 +15,18 @@ namespace View {
 
 		/** Constructor; forwards the arguments to SDL_CreateWindow.
  		 * @param tn Arguments to forward to SDL_CreateWindow. */
-		template<typename... TN> Frame(TN... tn);
-		/** Destructor; frees the child window. */
+		/*template<typename... TN> Frame(TN... tn):
+			win(SDL_CreateWindow(tn...)) {}*/
+		Frame(void);
+		Frame(SDL_Window*);
 		virtual ~Frame(void);
+		//Frame(SDL_Window* win): win(win) {}
+		/** Destructor; frees the child window. */
+		//virtual ~Frame(void) = default;
 	private:
 		SDL_Window *win;
 	};
 
 }
-
-#include "frame.tpp"
 
 #endif
