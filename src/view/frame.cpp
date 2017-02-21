@@ -2,6 +2,7 @@
 
 
 namespace View {
+	Frame::Frame(SDL_Window *win): win(win) {}
 	Frame::~Frame(void)
 	{
 		if(win) SDL_DestroyWindow(win);
