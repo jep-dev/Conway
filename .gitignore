@@ -28,12 +28,7 @@
 *.lib
 
 # Documents
-man/*
-man/**/*
-html/*
-html/**/*
-latex/*
-latex/**/*
+doc
 
 # Executables
 bin/*
