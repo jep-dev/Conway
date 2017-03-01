@@ -1,8 +1,1 @@
--std=c++11
- -fPIC
- -Iinclude/
- -Iinclude/control
- -Iinclude/view
- -Iinclude/model
- -I/usr/include/SDL2/
 
