@@ -12,10 +12,11 @@ namespace View {
 		while(SDL_PollEvent(&ev)) {
 			switch(ev.type) {
 				case SDL_WINDOWEVENT_CLOSE: {
-						return false;
-					}
-				case SDL_QUIT:
 					return false;
+				}
+				case SDL_QUIT: {
+					return false;
+				}
 				case SDL_WINDOWEVENT: {
 					if(ev.window.windowID == SDL_GetWindowID(win)) {
 						switch(ev.window.type) {
