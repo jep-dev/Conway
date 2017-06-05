@@ -1,2 +1,1 @@
-# Conway
-Game of Life (SDL2)
+# SDL2 Modular Concurrent Graphical Toolkit
