@@ -16,7 +16,7 @@ namespace View {
 		virtual bool run(void);
 
 		/** Constructor; forwards the arguments to SDL_CreateWindow.
- 		 * @param tn Arguments to forward to SDL_CreateWindow. */
+ 		 * @param win The window managed by the Frame */
 		Frame(SDL_Window *win = SDL_CreateWindow("", 0, 0, 640, 480, 0));
 
 		/** Destructor; frees the child window. */
