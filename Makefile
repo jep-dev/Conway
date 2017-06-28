@@ -1,49 +1,92 @@
-CXX?=g++
-RM?=rm
+# New attempt at clean autodependency generation for a modular project
+#______________________________________________________________________________
 
-INC?=include/
-SRC?=src/
-APP?=app/
-LIB?=lib/
-BIN?=bin/
+# INPUT FORMATS
+HPP_DIR?=include/
+TPP_DIR?=$(HPP_DIR)
+CPP_DIR?=src/
 
-DIRS?=view model
-INC_DIRS?=$(foreach D,$(DIRS),$(INC)$(D))
-INCS?=$(foreach I,$(INC_DIRS),-I$(I))
+# OUTPUT FORMATS
+OUT_TYPES=O REL_O ABS_O D TD SO EXE
+D_DIR?=dep/
+TD_DIR?=dep/
+O_DIR?=lib/
+SO_DIR?=lib/
+EXE_DIR?=bin/
 
-override BINS?=$(BIN)modular
-override LIBS?=$(LIB)libframe.so $(LIB)frame.o $(LIB)main.o
+#______________________________________________________________________________
 
-override CXXFLAGS+=-std=c++11 \
-	-I/usr/include/SDL2/ -I$(INC) $(INCS)
+# FLAG OVERRIDES
+override CXXFLAGS+=-std=c++11 -I/usr/include/SDL2/ -I$(HPP_DIR)
+override LDFLAGS+=-L$(SO_DIR) -Wl,-rpath,$(SO_DIR)
 override LDLIBS+=-lSDL2_ttf -lSDL2 -ldl
-override LDFLAGS+=-Llib -Wl,-rpath,lib
 
-default: .clang_complete $(BIN)modular
+# TOOLS
+CXX?=g++
+MAKE_D=@mv -f $(TD_DIR)$*.Td $(D_DIR)$*.d && touch $@
+MAKE_TD=$(CXX) -MT $@ -MMD -MP -MF $(TD_DIR)$*.Td $(CXXFLAGS)
+MAKE_REL_O=$(MAKE_TD) -fPIC -c
+MAKE_ABS_O=$(MAKE_TD) -c
+MAKE_SO=$(CXX) $(LDFLAGS) -shared
+MAKE_EXE=$(CXX) $(LDFLAGS)
 
-$(BIN)modular: $(LIB)libframe.so $(LIB)main.o
-	$(CXX) $(LDFLAGS) \
-		-o $(BIN)modular $(LIB)main.o -lframe $(LDLIBS)
+#______________________________________________________________________________
 
-$(LIB)libframe.so: $(LIB)frame.o
-	$(CXX) $(LDFLAGS) -shared \
-		-o $(LIB)libframe.so $(LIB)frame.o $(LDLIBS)
+EXE_NAME=modular
+EXE_SRC_NAME=$(EXE_NAME)_main
+EXE_FILE=$(EXE_DIR)$(EXE_NAME)
 
-$(LIB)main.o: $(APP)main.cpp
-	$(CXX) $(CXXFLAGS) \
-		-c -o $(LIB)main.o $(APP)main.cpp
+define MODULE =
+$(addprefix $(1)_,$(2))
+endef
+define WRAP =
+$(addprefix $(1),$(addsuffix $(3),$(2)))
+endef
 
-$(LIB)frame.o: $(SRC)view/frame.cpp
-	$(CXX) $(CXXFLAGS) -fPIC \
-		-c -o $(LIB)frame.o $(SRC)view/frame.cpp
+ABS_O_NAMES=$(EXE_SRC_NAME)
+REL_O_NAMES=$(call MODULE,view,frame panel)
+O_NAMES=$(ABS_O_NAMES) $(REL_O_NAMES)
+SO_NAMES=$(addprefix lib,$(REL_O_NAMES))
 
-.clang_complete: .phony_explicit
-	@echo $(foreach V,$(CXXFLAGS),$(V: %=%)\\n) > $@
-#@echo CXXFLAGS=$(CXXFLAGS)
-#@echo CXXFLAGS-\>$($(CXXFLAGS) '-I/usr/include':% =%\\n)
-#@echo $($(CXXFLAGS) '-I/usr/include':% =%\\n) > $@
+ABS_O_FILES=$(call WRAP,$(O_DIR),$(ABS_O_NAMES),.o)
+REL_O_FILES=$(call WRAP,$(O_DIR),$(REL_O_NAMES),.o)
+O_FILES=$(ABS_O_FILES) $(REL_O_FILES)
+D_FILES=$(call WRAP,$(D_DIR),$(O_NAMES),.d)
+TD_FILES=$(call WRAP,$(TD_DIR),$(O_NAMES),.d)
+SO_FILES=$(call WRAP,$(SO_DIR),$(SO_NAMES),.so)
+SO_LIBS=$(addprefix -l,$(REL_O_NAMES))
 
-clean:
-	$(RM) $(BINS) $(LIBS)
+default: .clang_complete $(EXE_FILE)
 
-.PHONY: clean .phony_explicit
+.PHONY: clean clean-bin clean-lib clean-dep debug-% .clang_complete
+
+clean: clean-bin clean-lib clean-dep
+clean-bin:; $(RM) $(EXE_FILE)
+clean-lib:; $(RM) $(O_FILES) $(SO_FILES)
+clean-dep:; $(RM) $(D_FILES) $(TD_FILES)
+
+$(EXE_FILE): $(SO_FILES) $(ABS_O_FILES)
+	$(MAKE_EXE) -o $@ $(ABS_O_FILES) $(SO_LIBS) $(LDLIBS)
+$(SO_FILES): $(SO_DIR)lib%.so: $(O_DIR)%.o
+	$(MAKE_SO) -o $@ $< $(LDLIBS)
+
+define MAKE_O_FILES =
+	$($(1)_O_FILES): $(O_DIR)%.o: $(CPP_DIR)%.cpp
+endef
+
+$(call MAKE_O_FILES,ABS)
+$(call MAKE_O_FILES,ABS)
+	$(MAKE_ABS_O) -o $@ $<
+	$(MAKE_D)
+$(call MAKE_O_FILES,REL)
+	$(MAKE_REL_O) -o $@ $<
+	$(MAKE_D)
+
+$(D_DIR)%.d:;
+.PRECIOUS: $(D_DIR)%.d
+
+.clang_complete:; @echo $(CXXFLAGS) > $@
+
+debug-%:; @echo "#$* = '$($*)'"
+
+include $(wildcard $(D_FILES))
