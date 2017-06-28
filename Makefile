@@ -3,15 +3,23 @@
 
 # INPUT FORMATS
 HPP_DIR?=include/
+HPP_EXT?=.hpp
 TPP_DIR?=$(HPP_DIR)
+TPP_EXT?=.tpp
 CPP_DIR?=src/
+CPP_EXT?=.cpp
 
 # OUTPUT FORMATS
 OUT_TYPES=O REL_O ABS_O D TD SO EXE
 D_DIR?=dep/
+D_EXT?=.d
 TD_DIR?=dep/
+TD_EXT?=.Td
 O_DIR?=lib/
+O_EXT?=.o
 SO_DIR?=lib/
+SO_PRE?=lib
+SO_EXT?=.so
 EXE_DIR?=bin/
 
 #______________________________________________________________________________
@@ -23,8 +31,8 @@ override LDLIBS+=-lSDL2_ttf -lSDL2 -ldl
 
 # TOOLS
 CXX?=g++
-MAKE_D=@mv -f $(TD_DIR)$*.Td $(D_DIR)$*.d && touch $@
-MAKE_TD=$(CXX) -MT $@ -MMD -MP -MF $(TD_DIR)$*.Td $(CXXFLAGS)
+MAKE_D=@mv -f $(TD_DIR)$*$(TD_EXT) $(D_DIR)$*$(D_EXT) && touch $@
+MAKE_TD=$(CXX) -MT $@ -MMD -MP -MF $(TD_DIR)$*$(TD_EXT) $(CXXFLAGS)
 MAKE_REL_O=$(MAKE_TD) -fPIC -c
 MAKE_ABS_O=$(MAKE_TD) -c
 MAKE_SO=$(CXX) $(LDFLAGS) -shared
@@ -46,14 +54,14 @@ endef
 ABS_O_NAMES=$(EXE_SRC_NAME)
 REL_O_NAMES=$(call MODULE,view,frame panel)
 O_NAMES=$(ABS_O_NAMES) $(REL_O_NAMES)
-SO_NAMES=$(addprefix lib,$(REL_O_NAMES))
+SO_NAMES=$(addprefix $(SO_PRE),$(REL_O_NAMES))
 
-ABS_O_FILES=$(call WRAP,$(O_DIR),$(ABS_O_NAMES),.o)
-REL_O_FILES=$(call WRAP,$(O_DIR),$(REL_O_NAMES),.o)
+ABS_O_FILES=$(call WRAP,$(O_DIR),$(ABS_O_NAMES),$(O_EXT))
+REL_O_FILES=$(call WRAP,$(O_DIR),$(REL_O_NAMES),$(O_EXT))
 O_FILES=$(ABS_O_FILES) $(REL_O_FILES)
-D_FILES=$(call WRAP,$(D_DIR),$(O_NAMES),.d)
-TD_FILES=$(call WRAP,$(TD_DIR),$(O_NAMES),.d)
-SO_FILES=$(call WRAP,$(SO_DIR),$(SO_NAMES),.so)
+D_FILES=$(call WRAP,$(D_DIR),$(O_NAMES),$(D_EXT))
+TD_FILES=$(call WRAP,$(TD_DIR),$(O_NAMES),$(TD_EXT))
+SO_FILES=$(call WRAP,$(SO_DIR),$(SO_NAMES),$(SO_EXT))
 SO_LIBS=$(addprefix -l,$(REL_O_NAMES))
 
 default: .clang_complete $(EXE_FILE)
@@ -67,11 +75,11 @@ clean-dep:; $(RM) $(D_FILES) $(TD_FILES)
 
 $(EXE_FILE): $(SO_FILES) $(ABS_O_FILES)
 	$(MAKE_EXE) -o $@ $(ABS_O_FILES) $(SO_LIBS) $(LDLIBS)
-$(SO_FILES): $(SO_DIR)lib%.so: $(O_DIR)%.o
+$(SO_FILES): $(SO_DIR)$(SO_PRE)%$(SO_EXT): $(O_DIR)%$(O_EXT)
 	$(MAKE_SO) -o $@ $< $(LDLIBS)
 
 define MAKE_O_FILES =
-	$($(1)_O_FILES): $(O_DIR)%.o: $(CPP_DIR)%.cpp
+	$($(1)_O_FILES): $(O_DIR)%$(O_EXT): $(CPP_DIR)%$(CPP_EXT)
 endef
 
 $(call MAKE_O_FILES,ABS)
@@ -82,11 +90,11 @@ $(call MAKE_O_FILES,REL)
 	$(MAKE_REL_O) -o $@ $<
 	$(MAKE_D)
 
-$(D_DIR)%.d:;
-.PRECIOUS: $(D_DIR)%.d
+$(D_DIR)%$(D_EXT):;
+.PRECIOUS: $(D_DIR)%$(D_EXT)
 
 .clang_complete:; @echo $(CXXFLAGS) > $@
 
 debug-%:; @echo "#$* = '$($*)'"
 
-include $(wildcard $(D_FILES))
+include $(wildcard $(D_FILES) Doxygen.mk)
