@@ -27,9 +27,6 @@
 *.a
 *.lib
 
-# Documents
-doc
-
 # Executables
 bin/*
 bin/**/*
@@ -41,3 +38,9 @@ bin/**/*
 *.bak
 *.sen
 *.swp
+
+# Documents
+doc/**/*
+!doc/Doxyfile
+!**/README*
+
