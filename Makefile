@@ -66,7 +66,7 @@ SO_LIBS=$(addprefix -l,$(REL_O_NAMES))
 
 default: .clang_complete $(EXE_FILE)
 
-.PHONY: clean clean-bin clean-lib clean-dep debug-% .clang_complete
+.PHONY: clean clean-bin clean-lib clean-dep debug-%
 
 clean: clean-bin clean-lib clean-dep
 clean-bin:; $(RM) $(EXE_FILE)
@@ -93,7 +93,7 @@ $(call MAKE_O_FILES,REL)
 $(D_DIR)%$(D_EXT):;
 .PRECIOUS: $(D_DIR)%$(D_EXT)
 
-.clang_complete:; @echo $(CXXFLAGS) > $@
+.clang_complete: $(D_FILES); @echo $(CXXFLAGS) > $@
 
 debug-%:; @echo "#$* = '$($*)'"
 
