@@ -4,9 +4,6 @@ doxygen?=doxygen
 doxymake=$(doxygen) -g
 
 # Input parameters
-
-DOXY_PROJECT_NAME?="Modular"
-DOXY_PROJECT_BRIEF?="\"Experimental modular project\""
 doc_dir?=doc/
 doc_name?=Doxyfile
 doc_file?=$(doc_dir)$(doc_name)
@@ -35,12 +32,12 @@ V_DOXY_ALL=$(filter DOXY_%,$(.VARIABLES))
 V_DOXY_ALL_SUFFIXES=$(V_DOXY_ALL:DOXY_%=%)
 V_DOXY_REPLACEMENT=$(foreach V,$(V_DOXY_ALL_SUFFIXES),\\n$(V) = $(DOXY_$(V)))
 
-$(doc_sentinel): $(doc_file) $(EXE_FILE)
+$(doc_sentinel): Doxygen.mk $(doc_file) $(EXE_FILE)
 	@$(doxygen) $(doc_file) >/dev/null && touch $@
 
 $(doc_file):
 	@$(doxymake) $(doc_file) >/dev/null && \
 		echo $(V_DOXY_REPLACEMENT) >> $(doc_file)
 
-doc: $(doc_sentinel)
+doc: Doxygen.mk $(doc_sentinel)
 clean-doc:; $(RM) $(doc_file) $(doc_sentinel)
