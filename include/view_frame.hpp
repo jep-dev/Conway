@@ -7,18 +7,21 @@
 
 namespace View {
 
+	/** @brief Shorthand for SDL_Event::type */
 	typedef decltype(SDL_Event::type) EVID;
+
+	/** @brief A container for SDL_Window with event logic */
 	struct Frame : public Runnable {
 
-		/** Polls and processes one event.
+		/** @brief Polls and processes one event.
  		 * @return true unless the frame should close. */
 		virtual bool poll(void);
 
-		/** Polls until it returns false.
+		/** @brief Polls until it returns false.
  		 * @return true unless the frame should close. */
 		virtual bool run(void);
 
-		/** Template for event handlers; signature will change soon.
+		/** @brief Template for event handlers; signature will change soon.
 		 * @tparam S type of non-optional first argument, soon SDL_Event.
 		 * @tparam T type(s) of optional argument(s).
 		 * @param evid event id from SDL_Event::type.
@@ -28,13 +31,14 @@ namespace View {
 		template<typename S, typename... T>
 		bool handle(EVID && evid, S && s, T &&... t);
 
-		/** Constructor; forwards the arguments to SDL_CreateWindow.
+		/** @brief Constructor; creates and stores an SDL_Window.
  		 * @param win The window managed by the Frame */
 		Frame(SDL_Window *win = SDL_CreateWindow("", 0, 0, 640, 480, 0));
 
-		/** Destructor; frees the child window. */
+		/** @brief Destructor; frees the window managed by the Frame. */
 		virtual ~Frame(void);
 	private:
+		/** @brief Internal window object, freed by the destructor. */
 		SDL_Window *win;
 	};
 
