@@ -2426,19 +2426,20 @@ GENERATE_LEGEND        = YES
 
 DOT_CLEANUP            = YES
 
-RECURSIVE = NO 
+RECURSIVE = YES 
 CALL_GRAPH = YES 
+MULTILINE_CPP_IS_BRIEF = YES 
 BUILTIN_STL_SUPPORT = YES 
 COLS_IN_ALPHA_INDEX = 5 
 DOT_TRANSPARENT = YES 
 EXTRACT_PRIVATE = YES 
-INPUT = README.md include/modular_main.hpp include/runnable.hpp include/view_panel.hpp include/view_frame.hpp src/modular_main.cpp src/view_panel.cpp src/view_frame.cpp 
-PROJECT_BRIEF = "Experimental modular project" 
+INPUT = README.md include/modular_main.hpp include/runnable.hpp include/view_panel.hpp include/templates.hpp include/view_frame.hpp include/modular_main.hpp include/runnable.hpp include/view_panel.hpp include/templates.hpp include/view_frame.hpp src/modular_main.cpp src/view_panel.cpp src/view_frame.cpp 
+WARNINGS = NO 
 QT_AUTOBRIEF = YES 
-PROJECT_NAME = Modular 
 GENERATE_MAN = YES 
 EXTRACT_ALL = YES 
 EXTRACT_PACKAGE = YES 
+CALLER_GRAPH = YES 
 STRIP_FROM_PATH = ../ 
 OUTPUT_DIRECTORY = doc/ 
 USE_MDFILE_AS_MAINPAGE = README.md 
