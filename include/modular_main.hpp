@@ -4,6 +4,7 @@
 #include "view_frame.hpp"
 #include "view_panel.hpp"
 #include "runnable.hpp"
+#include "templates.hpp"
 
 /** Entry point for the program
   @param argc Number of arguments.
