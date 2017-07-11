@@ -83,12 +83,8 @@ define MAKE_O_FILES =
 endef
 
 $(call MAKE_O_FILES,ABS)
-$(call MAKE_O_FILES,ABS)
-	$(MAKE_ABS_O) -o $@ $<
-	$(MAKE_D)
-$(call MAKE_O_FILES,REL)
-	$(MAKE_REL_O) -o $@ $<
-	$(MAKE_D)
+$(call MAKE_O_FILES,ABS); $(MAKE_ABS_O) -o $@ $< && $(MAKE_D)
+$(call MAKE_O_FILES,REL); $(MAKE_REL_O) -o $@ $< && $(MAKE_D)
 
 $(D_DIR)%$(D_EXT):;
 .PRECIOUS: $(D_DIR)%$(D_EXT)
