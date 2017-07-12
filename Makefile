@@ -31,7 +31,7 @@ override LDLIBS+=-lSDL2_ttf -lSDL2 -ldl
 
 # TOOLS
 CXX?=g++
-MAKE_D=@mv -f $(TD_DIR)$*$(TD_EXT) $(D_DIR)$*$(D_EXT) && touch $@
+MAKE_D=mv -f $(TD_DIR)$*$(TD_EXT) $(D_DIR)$*$(D_EXT) && touch $@
 MAKE_TD=$(CXX) -MT $@ -MMD -MP -MF $(TD_DIR)$*$(TD_EXT) $(CXXFLAGS)
 MAKE_REL_O=$(MAKE_TD) -fPIC -c
 MAKE_ABS_O=$(MAKE_TD) -c
