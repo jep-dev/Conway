@@ -1,5 +1,4 @@
 # Tools
-
 doxygen?=doxygen
 doxymake=$(doxygen) -g
 
@@ -7,7 +6,6 @@ doxymake=$(doxygen) -g
 doc_dir?=doc/
 doc_name?=Doxyfile
 doc_file?=$(doc_dir)$(doc_name)
-doc_sentinel?=$(doc_file:$(doc_dir)%=$(doc_dir).%.sen)
 
 DOXY_BUILTIN_STL_SUPPORT?=YES
 DOXY_CALL_GRAPH?=YES
@@ -29,19 +27,16 @@ DOXY_WARNINGS=NO
 
 override DOXY_INPUT+=$(DOXY_USE_MDFILE_AS_MAINPAGE) \
 	$(foreach V,HPP TPP CPP,$(wildcard $($(V)_DIR)*))
-#$(foreach V,HPP TPP CPP,$(wildcard $($(V)_DIR)*$($(V)_EXT)))
 
 V_HEADERS=$(filter %$(HPP_EXT) %$(TPP_EXT),$(DOXY_INPUT))
 V_DOXY_ALL=$(filter DOXY_%,$(.VARIABLES))
 V_DOXY_ALL_SUFFIXES=$(V_DOXY_ALL:DOXY_%=%)
 V_DOXY_REPLACEMENT=$(foreach V,$(V_DOXY_ALL_SUFFIXES),\\n$(V) = $(DOXY_$(V)))
 
-$(doc_sentinel): Doxygen.mk $(doc_file) $(EXE_FILE)
-	@$(doxygen) $(doc_file) >/dev/null && touch $@
-
-$(doc_file):
+$(doc_file): Doxygen.mk $(DOXY_INPUT)
 	@$(doxymake) $(doc_file) >/dev/null && \
 		echo $(V_DOXY_REPLACEMENT) >> $(doc_file)
 
-doc: Doxygen.mk $(doc_sentinel)
-clean-doc:; $(RM) $(doc_file) $(doc_sentinel)
+doc: Doxygen.mk $(doc_file)
+clean-doc:; $(RM) $(doc_file)
+.PHONY: doc clean-doc
