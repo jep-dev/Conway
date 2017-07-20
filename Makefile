@@ -1,96 +1,85 @@
-# New attempt at clean autodependency generation for a modular project
-#______________________________________________________________________________
-
-# INPUT FORMATS
-HPP_DIR?=include/
-HPP_EXT?=.hpp
-TPP_DIR?=$(HPP_DIR)
-TPP_EXT?=.tpp
-CPP_DIR?=src/
-CPP_EXT?=.cpp
-
-# OUTPUT FORMATS
-OUT_TYPES=O REL_O ABS_O D TD SO EXE
-D_DIR?=dep/
-D_EXT?=.d
-TD_DIR?=dep/
-TD_EXT?=.Td
-O_DIR?=lib/
-O_EXT?=.o
-SO_DIR?=lib/
-SO_PRE?=lib
-SO_EXT?=.so
-EXE_DIR?=bin/
-
-#______________________________________________________________________________
-
-# FLAG OVERRIDES
-override CXXFLAGS+=-std=c++11 -I/usr/include/SDL2/ -I$(HPP_DIR)
-override LDFLAGS+=-L$(SO_DIR) -Wl,-rpath,$(SO_DIR)
+# Print only output lines, use `make ... | grep '\-o '
+# Just library outputs: `make ... | grep '\-fPIC\|\-shared'
+#_____________________________________________________________________ Options
+builds=release
+exes=modular
+libs=frame
+#                                                                      build_%
+build_name?=release
+build_version?=0.1
+#                                                                        sdl_%
+sdl_cxx?=-D_REENTRANT -I/usr/include/SDL2
+sdl_ld?=-lSDL2
+#                                                                    overrides
+override CXXFLAGS+=-DVERSION=$(build_version) -DBUILD=$(build_name) \
+	-std=c++11 -Iinclude/release -Iimpl/release -Iinclude -Iimpl $(sdl_cxx)
+override LDFLAGS+=-Lrelease/lib -Lrelease/obj -Lobj $(sdl_ld)
 override LDLIBS+=-lSDL2_ttf -lSDL2 -ldl
-
-# TOOLS
-CXX?=g++
-MAKE_D=mv -f $(TD_DIR)$*$(TD_EXT) $(D_DIR)$*$(D_EXT) && touch $@
-MAKE_TD=$(CXX) -MT $@ -MMD -MP -MF $(TD_DIR)$*$(TD_EXT) $(CXXFLAGS)
-MAKE_REL_O=$(MAKE_TD) -fPIC -c
-MAKE_ABS_O=$(MAKE_TD) -c
-MAKE_SO=$(CXX) $(LDFLAGS) -shared
-MAKE_EXE=$(CXX) $(LDFLAGS)
-
-#______________________________________________________________________________
-
-EXE_NAME=modular
-EXE_SRC_NAME=$(EXE_NAME)_main
-EXE_FILE=$(EXE_DIR)$(EXE_NAME)
-
-define MODULE =
-$(addprefix $(1)_,$(2))
+#______________________________________________________ Generated target lists
+#                                                                  exe_%_files
+exe_files=$(exes:%=$(build_name)/bin/%)
+exe_o_files=$(exes:%=$(build_name)/obj/%.o)
+exe_d_files=$(exes:%=$(build_name)/dep/%.d)
+#                                                                    so_%_file
+so_files=$(libs:%=$(build_name)/lib/lib%.so)
+so_o_files=$(libs:%=$(build_name)/lib/%.o)
+so_d_files=$(libs:%=$(build_name)/dep/%.d)
+#                                                                  all_%_files
+all_exe_files=$(exe_files)
+all_so_files=$(so_files)
+all_o_files=$(exe_o_files) $(so_o_files)
+all_d_files=$(exe_d_files) $(so_d_files)
+all_out_files=$(all_exe_files) $(all_so_files) $(all_o_files) $(all_d_files)
+#_____________________________________________________________________ Targets
+#                                                                      default
+default: $(all_exe_files) #                                            default
+#                                                                Echo variable
+echo-%: print-"$* = '$($*)'"
+#                                                                   Echo value
+print-%:; @echo "$*"
+#_________________________________________________________________ Definitions
+#                                                                      %_dep #
+define add_dep =
+	-MT $@ -MMD -MP -MF release/dep/$*.Td
 endef
-define WRAP =
-$(addprefix $(1),$(addsuffix $(3),$(2)))
+define move_dep =
+	@mv -f release/dep/$*.Td release/dep/$*.d && touch $@
 endef
+#_____________________________________________________________ Derived Targets
+$(exe_files): release/bin/%: release/obj/%.o $(so_files) $(exe_o_files)
+	$(CXX) $(LDFLAGS) -Wl,-rpath,release/lib \
+		-o $@ $< \
+		$(libs:%=-l%) $(LDLIBS)
+$(so_files): release/lib/lib%.so: release/lib/%.o
+	$(CXX) $(LDFLAGS) \
+		-shared -o $@ $< \
+		$(LDLIBS)
+release/lib/%.o: src/%.cpp
+$(so_o_files): release/lib/%.o: src/%.cpp release/dep/%.d include/%.hpp
+	$(CXX) $(call add_dep) \
+		$(CXXFLAGS) \
+		-fPIC -c -o $@ $<
+	$(call move_dep)
+release/obj/%.o: src/release/%.cpp
+$(exe_o_files): release/obj/%.o: src/release/%.cpp release/dep/%.d
+	$(CXX) $(call add_dep) \
+		$(CXXFLAGS) \
+		-c -o $@ $<
+	$(call move_dep)
 
-ABS_O_NAMES=$(EXE_SRC_NAME)
-REL_O_NAMES=$(call MODULE,view,frame panel)
-O_NAMES=$(ABS_O_NAMES) $(REL_O_NAMES)
-SO_NAMES=$(addprefix $(SO_PRE),$(REL_O_NAMES))
+#_______________________________________________________________ Phony targets
+.PHONY: clean $(foreach T,o d so exe,clean-$(T)) print-% echo-%
+#                                                                    clean-% #
+clean-o:; rm -f $(all_o_files)
+clean-d:; rm -f $(all_d_files)
+clean-so:; rm -f $(all_so_files)
+clean-exe:; rm -f $(all_exe_files)
 
-ABS_O_FILES=$(call WRAP,$(O_DIR),$(ABS_O_NAMES),$(O_EXT))
-REL_O_FILES=$(call WRAP,$(O_DIR),$(REL_O_NAMES),$(O_EXT))
-O_FILES=$(ABS_O_FILES) $(REL_O_FILES)
-D_FILES=$(call WRAP,$(D_DIR),$(O_NAMES),$(D_EXT))
-TD_FILES=$(call WRAP,$(TD_DIR),$(O_NAMES),$(TD_EXT))
-SO_FILES=$(call WRAP,$(SO_DIR),$(SO_NAMES),$(SO_EXT))
-SO_LIBS=$(addprefix -l,$(REL_O_NAMES))
-
-default: .clang_complete $(EXE_FILE)
-
-.PHONY: clean clean-bin clean-lib clean-dep debug-%
-
-clean: clean-bin clean-lib clean-dep
-clean-bin:; $(RM) $(EXE_FILE)
-clean-lib:; $(RM) $(O_FILES) $(SO_FILES)
-clean-dep:; $(RM) $(D_FILES) $(TD_FILES)
-
-$(EXE_FILE): $(SO_FILES) $(ABS_O_FILES)
-	$(MAKE_EXE) -o $@ $(ABS_O_FILES) $(SO_LIBS) $(LDLIBS)
-$(SO_FILES): $(SO_DIR)$(SO_PRE)%$(SO_EXT): $(O_DIR)%$(O_EXT)
-	$(MAKE_SO) -o $@ $< $(LDLIBS)
-
-define MAKE_O_FILES =
-	$($(1)_O_FILES): $(O_DIR)%$(O_EXT): $(CPP_DIR)%$(CPP_EXT)
-endef
-
-$(call MAKE_O_FILES,ABS)
-$(call MAKE_O_FILES,ABS); $(MAKE_ABS_O) -o $@ $< && $(MAKE_D)
-$(call MAKE_O_FILES,REL); $(MAKE_REL_O) -o $@ $< && $(MAKE_D)
-
-$(D_DIR)%$(D_EXT):;
-.PRECIOUS: $(D_DIR)%$(D_EXT)
-
-.clang_complete: $(D_FILES); @echo $(CXXFLAGS) > $@
-
-debug-%:; @echo "#$* = '$($*)'"
-
-include $(wildcard $(D_FILES) Doxygen.mk)
+#____________________________________________________________ Precious targets
+.PRECIOUS: release/dep/%.d .clang_complete
+#                                                              Empty targets #
+release/dep/%.d:;
+.clang_complete:; @echo $(CXXFLAGS) > .clang_complete #       Clang Complete #
+#________________________________________________________ Dependency inclusion
+include $(wildcard $($(libs) $(exes):%=release/dep/%.d))
+# include $(wildcard Doxygen.mk)                            TODO: when updated
