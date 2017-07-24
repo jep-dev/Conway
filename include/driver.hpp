@@ -14,7 +14,7 @@ namespace Runnable {
 
 	template<>
 	struct Driver<>: TaskBase<Driver<>> {
-		typedef std::function<void(void)> wait_type;
+		typedef std::function<bool(void)> wait_type;
 		wait_type wait;
 		e_task call(e_task e);
 		Driver(wait_type wait);
