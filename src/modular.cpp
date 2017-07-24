@@ -27,21 +27,15 @@ int main(int argc, const char *argv[]) {
 	unsigned frames = 0;
 	info(argv[0]);
 	Frame frame("Test Title");
-	Driver<> driver([&frames]() {
-		cout << "Frame: " << frames++ << endl;
+	Driver<> driver([&frames]() -> bool {
+		if(frames++ >= max_frames)
+			return false;
+		cout << "Frame: " << frames << endl;
 		SDL_Delay(ms_delay);
+		return true;
 	});
 
 	e_task dtask, ftask = e_task::start;
-	while(true) {
-		dtask = frame.call(ftask);
-		ftask = call(dtask, driver);
-		// if((unsigned(dtask)|unsigned(ftask)) & unsigned(e_task::error)) {
-		if(dtask == e_task::quit || ftask == e_task::quit
-			|| dtask == e_task::error || ftask == e_task::error) {
-			cout << "Frame returned " << task_str(dtask)
-				<< "; driver returned " << task_str(ftask) << endl;
-			break;
-		}
-	}
+	while(ftask != e_task::quit)
+		ftask = call(dtask = frame.call(ftask), driver);
 }

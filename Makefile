@@ -2,7 +2,7 @@
 # TODO migrate options or everything but options to another makefile
 builds=release
 exes=modular
-libs=driver frame
+libs=runnable driver frame
 #                                                                      build_%
 build_name?=release
 build_app?=modular
