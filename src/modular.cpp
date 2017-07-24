@@ -1,8 +1,5 @@
 #include <iostream>
-
 #include "view.hpp"
-#include "driver.hpp"
-#include "SDL2/SDL.h"
 
 using namespace Runnable;
 using namespace View;
