@@ -2,14 +2,8 @@
 #define VIEW_FRAME_HPP
 
 #include "view.hpp"
-#include "runnable.hpp"
 
 namespace View {
-	using Runnable::e_task;
-	using Runnable::TaskBase;
-	using Runnable::Driver;
-
-	struct Frame;
 	struct Frame: Runnable::TaskBase<Frame> {
 		static constexpr Uint32 s_center = SDL_WINDOWPOS_CENTERED;
 		SDL_Window *win;
