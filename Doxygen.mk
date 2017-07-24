@@ -26,14 +26,15 @@ DOXY_USE_MDFILE_AS_MAINPAGE?=README.md
 DOXY_WARNINGS=NO
 
 override DOXY_INPUT+=$(DOXY_USE_MDFILE_AS_MAINPAGE) \
-	$(foreach V,HPP TPP CPP,$(wildcard $($(V)_DIR)*))
+	$(foreach V,hpp tpp cpp,$(wildcard $($(V)_dir)*.$(V)))
+#override DOXY_INPUT+=$(DOXY_USE_MDFILE_AS_MAINPAGE) \
+#	$(foreach V,HPP TPP CPP,$(wildcard $($(V)_DIR)*))
 
-V_HEADERS=$(filter %$(HPP_EXT) %$(TPP_EXT),$(DOXY_INPUT))
 V_DOXY_ALL=$(filter DOXY_%,$(.VARIABLES))
 V_DOXY_ALL_SUFFIXES=$(V_DOXY_ALL:DOXY_%=%)
 V_DOXY_REPLACEMENT=$(foreach V,$(V_DOXY_ALL_SUFFIXES),\\n$(V) = $(DOXY_$(V)))
 
-$(doc_file): Doxygen.mk $(DOXY_INPUT)
+$(doc_file): Doxygen.mk $(all_out_files) $(DOXY_INPUT)
 	@$(doxymake) $(doc_file) >/dev/null && \
 		echo $(V_DOXY_REPLACEMENT) >> $(doc_file)
 
