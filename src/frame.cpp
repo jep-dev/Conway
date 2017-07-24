@@ -2,12 +2,6 @@
 #include <iostream>
 #include <map>
 
-/* using Mutex::lock_t;
-using Mutex::Priority;
-using Mutex::Duration;
-using Mutex::lock_t;
-using Mutex::mutex_t; */
-
 namespace View {
 	Frame::Frame(const char *title, Uint32 f,
 		unsigned w, unsigned h, unsigned x, unsigned y):
