@@ -1,16 +1,19 @@
 #include "panel.hpp"
 
-/* namespace View {
-	bool Panel::matches(uint32_t ID) {
-		return false;
-	}
-	Panel::Panel(void): RunnableBase() {}
-	// bool Panel::matches(Uint32) { return false; }
-} */
-
+namespace View {
+	Panel::Panel(void): TaskBase() {}
+} /*
 namespace Runnable {
-	// IRunnable<View::Panel>::IRunnable(void): RunnableBase(), View::Panel() {}
-	/* uint32_t IRunnable<View::Panel>::poll(void) {
-		return e_status::maj_pass | e_status::min_poll;
-	} */
+	template<>
+	e_task TaskBase<View::Panel>::call(e_task e) {
+		return e_task::run;
+	}
+}
+namespace View { */
+	template<>
+	e_task Panel::call(Runnable::e_task e) {
+		// TODO stub
+		return e;
+	}
+
 }

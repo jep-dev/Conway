@@ -4,14 +4,12 @@
 #include "view.hpp"
 
 namespace View {
-	/** @brief A partition of a canvas */
-	/* struct Panel: RunnableBase {
-		using RunnableBase::run;
-		using RunnableBase::poll;
-		bool matches(Uint32);
+	struct Panel: Runnable::TaskBase<Panel> {
+		template<typename... DN>
+		e_task call(e_task e, DN &... dn);
 		Panel(void);
 		virtual ~Panel(void) = default;
-	}; */
+	};
 }
 
 #endif
