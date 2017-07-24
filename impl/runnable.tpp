@@ -3,6 +3,8 @@
 
 namespace Runnable {
 	template<typename D, typename... DN>
+	TaskBase<D,DN...>::TaskBase(void) {}
+	template<typename D, typename... DN>
 	e_task TaskBase<D,DN...>::call(e_task e, DN &... dn) {
 		return static_cast<D*>(this) -> call(e, dn...);
 	}

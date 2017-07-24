@@ -26,28 +26,12 @@ namespace Runnable {
 		TaskBase(void);
 		virtual ~TaskBase(void) = default;
 	};
-	/*	switch(e) {
-			case e_task::start: return os << "start";
-			case e_task::pause: return os << "pause";
-			case e_task::run:   return os << "run";
-			case e_task::error: return os << "error";
-			case e_task::quit:  return os << "quit";
-			case e_task::pass:  return os << "pass";
-			default:            return os << "unknown";
-		}
-	}*/
-	/* template<typename D, typename... DN> struct TaskBase {
-		e_task call(e_task e, DN &... dn) {
-			return static_cast<D*>(this) -> call(e, dn...);
-		}
-		TaskBase(void) {}
-		virtual ~TaskBase(void) = default;
-	}; */
 }
 
 template<typename D, typename... DN>
 Runnable::e_task call(Runnable::e_task e,
-		Runnable::TaskBase<D,DN...> &d, DN &... dn);
+	Runnable::TaskBase<D,DN...> &d, DN &... dn);
+
 #include "runnable.tpp"
 #include "driver.hpp"
 
