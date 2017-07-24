@@ -20,11 +20,16 @@ namespace View {
 	using Runnable::TaskBase;
 	using Runnable::Driver;
 
+	/** @brief Shorthand for SDL Event type member */
 	typedef decltype(SDL_Event::type) EVID;
+	/** @brief Runnable SDL Window container */
 	struct Frame;
+	/** @brief Runnable canvas partition */
 	struct Panel;
 }
 
 #include "frame.hpp"
+#include "panel.hpp"
+#include "events.hpp"
 
 #endif
