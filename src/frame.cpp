@@ -17,15 +17,12 @@ namespace View {
 	Frame::~Frame(void) { SDL_DestroyWindow(win); }
 }
 namespace Runnable {
-	/* template<typename... DN>
-	e_task TaskBase<View::Frame>::call(Runnable::e_task e, DN &... dn) {*/
 	template<>
-	e_task TaskBase<View::Frame>::call(Runnable::e_task e) {
+	e_task TaskBase<View::Frame>::call(e_task e) {
 		return e_task::quit;
 	}
 }
 namespace View {
-
 	template<>
 	e_task Frame::call(Runnable::e_task e) {
 		/* std::cout << "Received: " << unsigned(e) << std::endl;
