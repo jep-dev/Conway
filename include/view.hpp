@@ -30,6 +30,6 @@ namespace View {
 
 #include "frame.hpp"
 #include "panel.hpp"
-#include "events.hpp"
+#include "handler.hpp"
 
 #endif
