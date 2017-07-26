@@ -1,1 +1,1 @@
--std=c++11 -DBUILD="release" -DVERSION=0.1 -Iimpl/ -Iinclude/ -D_REENTRANT -I/usr/include/SDL2
+-std=c++11 -Iimpl/ -Iinclude/ -DBUILD="release" -DVERSION=0.1 -D_REENTRANT -I/usr/include/SDL2
