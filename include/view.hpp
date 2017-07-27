@@ -1,19 +1,10 @@
 #ifndef VIEW_HPP
 #define VIEW_HPP
 
-// Standard Library
-#include <algorithm>
-#include <functional>
-#include <iosfwd>
-#include <type_traits>
-#include <utility>
-
 // Third-party
-#include "SDL2/SDL.h"
-
+#include "SDL2/SDL.h" // -> SDL2/SDL_*.hpp
 // Internal
-#include "runnable.hpp"
-#include "driver.hpp"
+#include "runnable.hpp" // -> driver.hpp, handler.hpp
 
 namespace View {
 	using Runnable::e_task;
@@ -30,6 +21,5 @@ namespace View {
 
 #include "frame.hpp"
 #include "panel.hpp"
-#include "handler.hpp"
 
 #endif

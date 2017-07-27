@@ -1,11 +1,15 @@
 #ifndef RUNNABLE_HPP
 #define RUNNABLE_HPP
 
+// Standard library
+// #include <algorithm>
 #include <chrono>
 #include <cstdint>
+// #include <functional>
+#include <iostream> // TODO Use iosfwd
 #include <mutex>
-#include <iostream>
-// TODO Use iosfwd -- Runnable is used everywhere but iostream is heavy
+// #include <type_traits>
+// #include <utility>
 
 namespace Runnable {
 
@@ -18,8 +22,8 @@ namespace Runnable {
 	enum Duration { brief = 30, extended = 50, longest = 500 };
 
 	enum struct e_task : uint8_t {
-		//000      001  010    011   100   101
-		start=0, pause, run, error, quit, pass
+		/*000      001    010    011    100    101*/
+		start=0, pause,   run, error,  quit,  pass
 	};
 	std::ostream& operator<<(std::ostream &os, e_task const& e);
 	template<typename D, typename... DN> struct TaskBase {
@@ -35,5 +39,6 @@ Runnable::e_task call(Runnable::e_task e,
 
 #include "runnable.tpp"
 #include "driver.hpp"
+#include "handler.hpp"
 
 #endif
