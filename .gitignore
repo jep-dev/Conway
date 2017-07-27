@@ -43,4 +43,3 @@ release/bin/**/*
 doc/**/*
 !doc/Doxyfile
 !**/README*
-
