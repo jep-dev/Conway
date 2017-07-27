@@ -11,18 +11,19 @@ namespace View {
 	Frame::~Frame(void) { SDL_DestroyWindow(win); }
 }
 namespace Runnable {
-	template<>
-	e_task TaskBase<View::Frame>::call(e_task e) {
-		return e_task::quit;
-	}
+	// TODO why is this necessary? Remove or provide impl here instead
+	template<> e_task TaskBase<View::Frame>::call(e_task e)
+		{ return e_task::quit; }
 }
 namespace View {
+	/* template<>
+	e_task Frame::call(Runnable::e_task t)*/
 	template<>
-	e_task Frame::call(Runnable::e_task e) {
-		/* std::cout << "Received: " << unsigned(e) << std::endl;
-		return e_task::quit; */
+	e_task Frame::call(Runnable::e_task task, OnFrameQuitEvent &on_quit,
+		OnFrameWindowEvent &on_window, OnFrameKeyEvent &on_key,
+		OnFrameMouseEvent &on_mouse, OnFrameUserEvent &on_user) {
 		using Runnable::e_task;
-		switch(e) {
+		switch(task) {
 			// Before 'start', driver may sleep
 			case e_task::start:
 				return e_task::run;
@@ -30,8 +31,15 @@ namespace View {
 				SDL_Event ev;
 				if(SDL_PollEvent(&ev)) {
 					switch(ev.type & 0xff00) {
-						case SDL_QUIT:
-							return e_task::quit;
+						case SDL_QUIT: return on_quit.handle(task, *this, ev);
+						case SDL_WINDOWEVENT: return on_window.handle(task, *this, ev);
+						case SDL_KEYDOWN: return on_key.handle(task, *this, ev);
+						case SDL_MOUSEMOTION: return on_mouse.handle(task, *this, ev);
+						case SDL_USEREVENT: return on_user.handle(task, *this, ev);
+						default: return e_task::run;
+					}
+						/* case SDL_QUIT:
+							// return e_task::quit;
 						case SDL_WINDOWEVENT:
 							if(ev.window.event == SDL_WINDOWEVENT_CLOSE)
 								return e_task::quit;
@@ -41,8 +49,7 @@ namespace View {
 							if(ev.key.keysym.sym == SDLK_ESCAPE)
 								return e_task::quit;
 							break;
-					}
-					return e_task::run;
+					return e_task::run; */
 				}
 				SDL_FillRect(SDL_GetWindowSurface(win),
 					nullptr, 0x000000);
