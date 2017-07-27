@@ -52,7 +52,7 @@ $(so_o_dir)%.o: $(cpp_dir)%.cpp $(hpp_dir)%.hpp
 		-fPIC -c -o $@ $<
 	$(move_d)
 $(exes:%=$(exe_o_dir)%.o): \
-$(exe_o_dir)%.o: $(cpp_dir)%.cpp $(d_files)
+$(exe_o_dir)%.o: $(cpp_dir)%.cpp $(wildcard $(hpp_dir)%.hpp) $(d_files)
 	$(CXX) $(CXXFLAGS) $(flags_d) \
 		-c -o $@ $<
 	$(move_d)
