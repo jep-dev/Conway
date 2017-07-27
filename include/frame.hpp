@@ -2,9 +2,43 @@
 #define VIEW_FRAME_HPP
 
 #include "view.hpp"
+using namespace View;
+using namespace Runnable;
+
+namespace Runnable {
+	struct OnFrameQuitEvent;
+	struct OnFrameWindowQuitEvent;
+	struct OnFrameKeyQuitEvent;
+	struct OnFrameMouseQuitEvent;
+	struct OnFrameUserQuitEvent;
+
+	struct OnFrameQuitEvent:
+	QuitEventHandler<1, View::Frame, OnFrameQuitEvent> {
+		e_task handle(e_task, View::Frame &, SDL_Event const&);
+	};
+	struct OnFrameWindowEvent:
+	WindowEventHandler<0, View::Frame, OnFrameWindowEvent> {
+		e_task handle(e_task, View::Frame &, SDL_Event const&);
+	};
+	struct OnFrameKeyEvent:
+	KeyEventHandler<0, View::Frame, OnFrameKeyEvent> {
+		e_task handle(e_task, View::Frame &, SDL_Event const&);
+	};
+	struct OnFrameMouseEvent:
+	MouseEventHandler<0, View::Frame, OnFrameMouseEvent> {
+		e_task handle(e_task, View::Frame &, SDL_Event const&);
+	};
+	struct OnFrameUserEvent:
+	UserEventHandler<0, View::Frame, OnFrameUserEvent> {
+		e_task handle(e_task, View::Frame &, SDL_Event const&);
+	};
+}
 
 namespace View {
-	struct Frame: Runnable::TaskBase<Frame> {
+	// struct Frame: Runnable::TaskBase<Frame>
+	struct Frame: Runnable::TaskBase<Frame, Runnable::OnFrameQuitEvent,
+		Runnable::OnFrameWindowEvent, Runnable::OnFrameKeyEvent,
+		Runnable::OnFrameMouseEvent, Runnable::OnFrameWindowEvent> {
 	protected:
 		static constexpr Uint32 s_center = SDL_WINDOWPOS_CENTERED;
 		SDL_Window *win;
@@ -32,5 +66,4 @@ namespace View {
 		virtual ~Frame(void);
 	};
 }
-
 #endif
