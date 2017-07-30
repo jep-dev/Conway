@@ -3,8 +3,8 @@
 namespace View {
 	Panel::Panel(void): TaskBase() {}
 	template<>
-	e_task Panel::call(Runnable::e_task e) {
+	Signal Panel::call(Signal sig) {
 		// TODO stub
-		return e;
+		return sig;
 	}
 }

@@ -6,37 +6,39 @@ using std::endl;
 
 
 // Unconditional quit response
-e_task OnFrameQuitEvent::handle(e_task task, Frame &frame, SDL_Event const& ev) {
-	return e_task::quit;
+Signal OnFrameQuitEvent::handle(Signal sig, Frame &frame, SDL_Event const& ev) {
+	return Signal::Done;
 }
 // Conditional quit response or passthrough
-e_task OnFrameWindowEvent::handle(e_task task, Frame &frame, SDL_Event const& ev) {
+Signal OnFrameWindowEvent::handle(Signal sig,
+		Frame &frame, SDL_Event const& ev) {
 	// TODO match window ID
 	switch(ev.window.event) {
-		case SDL_WINDOWEVENT_CLOSE: return e_task::quit;
+		case SDL_WINDOWEVENT_CLOSE: return Signal::Done;
 		// TODO window event stub
-		default: return task;
+		default: return sig;
 	}
-	// return e_task::quit;
 }
 // Conditional quit response or passthrough
-e_task OnFrameKeyEvent::handle(e_task task, Frame &frame, SDL_Event const& ev) {
+Signal OnFrameKeyEvent::handle(Signal sig, Frame &frame, SDL_Event const& ev) {
 	// TODO match window ID
 	switch(ev.key.keysym.sym) {
-		case SDLK_ESCAPE: return e_task::quit;
+		case SDLK_ESCAPE: return Signal::Done;
 		// TODO key event stub
-		default: return task;
+		default: return sig;
 	}
 }
 // Passthrough unless delegate handlers intervene
-e_task OnFrameMouseEvent::handle(e_task task, Frame &frame, SDL_Event const& ev) {
+Signal OnFrameMouseEvent::handle(Signal sig,
+		Frame &frame, SDL_Event const& ev) {
 	// TODO mouse event stub
-	return task;
+	return sig;
 }
 // Passthrough unless delegate handlers intervene
-e_task OnFrameUserEvent::handle(e_task task, Frame &frame, SDL_Event const& ev) {
+Signal OnFrameUserEvent::handle(Signal sig,
+		Frame &frame, SDL_Event const& ev) {
 	// TODO user event stub
-	return task;
+	return sig;
 }
 
 
@@ -65,8 +67,8 @@ int main(int argc, const char *argv[]) {
 		return false;
 	});
 
-	e_task dtask, ftask = e_task::start;
-	while(ftask != e_task::quit)
-		ftask = call(dtask = frame.call(ftask, on_quit, on_window,
+	Signal dsig, fsig = Signal::Start;
+	while(!(fsig & Signal::Abort))
+		fsig = call(dsig = frame.call(fsig, on_quit, on_window,
 				on_key, on_mouse, on_user), driver);
 }
