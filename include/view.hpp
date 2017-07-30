@@ -7,7 +7,7 @@
 #include "runnable.hpp" // -> driver.hpp, handler.hpp
 
 namespace View {
-	using Runnable::e_task;
+	using Runnable::Signal;
 	using Runnable::TaskBase;
 	using Runnable::Driver;
 
@@ -17,6 +17,10 @@ namespace View {
 	struct Frame;
 	/** @brief Runnable canvas partition */
 	struct Panel;
+}
+namespace Runnable {
+	template<> Signal TaskBase<View::Frame>::call(Signal sig)
+		{ return Signal::Quit; }
 }
 
 #include "frame.hpp"

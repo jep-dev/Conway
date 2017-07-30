@@ -14,23 +14,23 @@ namespace Runnable {
 
 	struct OnFrameQuitEvent:
 	QuitEventHandler<1, View::Frame, OnFrameQuitEvent> {
-		e_task handle(e_task, View::Frame &, SDL_Event const&);
+		Signal handle(Signal, View::Frame &, SDL_Event const&);
 	};
 	struct OnFrameWindowEvent:
 	WindowEventHandler<0, View::Frame, OnFrameWindowEvent> {
-		e_task handle(e_task, View::Frame &, SDL_Event const&);
+		Signal handle(Signal, View::Frame &, SDL_Event const&);
 	};
 	struct OnFrameKeyEvent:
 	KeyEventHandler<0, View::Frame, OnFrameKeyEvent> {
-		e_task handle(e_task, View::Frame &, SDL_Event const&);
+		Signal handle(Signal, View::Frame &, SDL_Event const&);
 	};
 	struct OnFrameMouseEvent:
 	MouseEventHandler<0, View::Frame, OnFrameMouseEvent> {
-		e_task handle(e_task, View::Frame &, SDL_Event const&);
+		Signal handle(Signal, View::Frame &, SDL_Event const&);
 	};
 	struct OnFrameUserEvent:
 	UserEventHandler<0, View::Frame, OnFrameUserEvent> {
-		e_task handle(e_task, View::Frame &, SDL_Event const&);
+		Signal handle(Signal, View::Frame &, SDL_Event const&);
 	};
 }
 
@@ -61,9 +61,12 @@ namespace View {
 		  @return The response task with respect to the timeline of one frame.
 		  */
 		template<typename... DN>
-		e_task call(e_task e, DN &... dn);
+		Signal call(Signal e, DN &... dn);
 		/** @brief Destructor; frees the managed SDL_Window. */
 		virtual ~Frame(void);
 	};
 }
+/* namespace Runnable {
+	template struct TaskBase<View::Frame>;
+} */
 #endif

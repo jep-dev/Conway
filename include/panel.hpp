@@ -6,7 +6,7 @@
 namespace View {
 	struct Panel: Runnable::TaskBase<Panel> {
 		template<typename... DN>
-		e_task call(e_task e, DN &... dn);
+		Signal call(Signal e, DN &... dn);
 		Panel(void);
 		virtual ~Panel(void) = default;
 	};

@@ -5,18 +5,11 @@
 #include <functional>
 
 namespace Runnable {
-
-	template<typename... DN>
-	struct Driver;
-
-	/* TODO Figure out why each specialization (DN...) requires explicit
-	   instantiation like below */
-
-	template<>
-	struct Driver<>: TaskBase<Driver<>> {
+	template<typename... D>
+	struct Driver: TaskBase<Driver<D...>, D...> {
 		typedef std::function<bool(void)> wait_type;
 		wait_type wait;
-		e_task call(e_task e);
+		Signal call(Signal e, D &... d);
 		Driver(wait_type wait);
 		virtual ~Driver(void) = default;
 	};
