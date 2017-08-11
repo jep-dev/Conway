@@ -6,7 +6,8 @@ using std::endl;
 
 
 // Unconditional quit response
-Signal OnFrameQuitEvent::handle(Signal sig, Frame &frame, SDL_Event const& ev) {
+Signal OnFrameQuitEvent::handle(Signal sig,
+		Frame &frame, SDL_Event const& ev) {
 	return Signal::Done;
 }
 // Conditional quit response or passthrough
@@ -20,7 +21,8 @@ Signal OnFrameWindowEvent::handle(Signal sig,
 	}
 }
 // Conditional quit response or passthrough
-Signal OnFrameKeyEvent::handle(Signal sig, Frame &frame, SDL_Event const& ev) {
+Signal OnFrameKeyEvent::handle(Signal sig,
+	Frame &frame, SDL_Event const& ev) {
 	// TODO match window ID
 	switch(ev.key.keysym.sym) {
 		case SDLK_ESCAPE: return Signal::Done;
