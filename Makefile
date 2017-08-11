@@ -1,3 +1,4 @@
+#                                           Configuration options and defaults
 include Makefile.conf
 # ................................................................ Definitions
 #                                                                      %_files
@@ -46,7 +47,7 @@ $(exe_dir)%: $(o_dir)%.o $(so_files) $(o_files)
 		$(libs:%=-l%) $(LDLIBS)
 #............................................................. Special targets
 #                                                               Clang Complete
-$(ccomplete): $(d_files); @echo $(CXXFLAGS) > $@
+$(ccomplete): $(d_files); @printf '%s\n' $(CXXFLAGS) > $@
 .PRECIOUS: $(complete_files)
 #                                                                  Print value
 print-val-%:; @echo "$*"
